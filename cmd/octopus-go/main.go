@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 
@@ -66,6 +67,11 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	r.GET("/metrics", func(c *gin.Context) {
+		h := promhttp.Handler()
+		h.ServeHTTP(c.Writer, c.Request)
+	})
 	r.POST("/tags", func(c *gin.Context) {
 		var tags []map[string]interface{}
 		err := c.BindJSON(&tags)
